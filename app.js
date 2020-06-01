@@ -13,7 +13,7 @@ dotenv.config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-//var chatRouter = require('./public/chat');
+var chatRouter = require('./routes/chatter');
 var app = express();
 
 
@@ -23,7 +23,6 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')))
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
 
@@ -39,35 +38,11 @@ app.use(function(req, res, next) {
 });
 
 //Routes
-app.use('/index', indexRouter);
-//app.use('/chat',chatRouter);
+app.use('/', indexRouter);
+app.use('/chatter',chatRouter);
 app.use('/users', usersRouter);
 //app.use('/send',emailRouter);
 //Static files
-app.use(express.static('public'));
-
-// Socket setup & pass server
-io.on('connection', (socket) => {
-
-    console.log('made socket connection', socket.id);
-
-    // Handle chat event
-    socket.on('chat', function(data){
-      console.log('message: ' + data);
-        // console.log(data);
-        io.sockets.emit('chat', data);
-    });
-
-    // Handle typing event
-    socket.on('typing', function(data){
-        socket.broadcast.emit('typing', data);
-    });
-
-    socket.on('disconnect', function(){
-      console.log('A user disconnected');
-    });
-
-});
 
 
 // Express session
